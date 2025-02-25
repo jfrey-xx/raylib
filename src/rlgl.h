@@ -860,7 +860,8 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
 
     #define GLAD_GL_IMPLEMENTATION
 //#include "external/glad.h"          // GLAD extensions loading library, includes OpenGL headers
-#include "external/glady.h"          // GLAD extensions loading library, includes OpenGL headers
+#include <GL/gl.h>              // direclty using gl
+//#include "external/glady.h"          // only GLAD extensions variables and types
 #endif
 
 #if defined(GRAPHICS_API_OPENGL_ES3)
