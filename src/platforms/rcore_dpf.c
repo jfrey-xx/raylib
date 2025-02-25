@@ -475,6 +475,9 @@ int InitPlatform(void)
     {
         CORE.Window.ready = true;
 
+	CORE.Window.display.width = CORE.Window.screen.width;
+        CORE.Window.display.height = CORE.Window.screen.height;
+ 
         CORE.Window.render.width = CORE.Window.screen.width;
         CORE.Window.render.height = CORE.Window.screen.height;
         CORE.Window.currentFbo.width = CORE.Window.render.width;
