@@ -447,6 +447,9 @@ void PollInputEvents(void)
         CORE.Input.Keyboard.keyRepeatInFrame[i] = 0;
     }
 
+    // Register previous mouse states
+    for (int i = 0; i < MAX_MOUSE_BUTTONS; i++) CORE.Input.Mouse.previousButtonState[i] = CORE.Input.Mouse.currentButtonState[i];
+
     // TODO: Poll input events for current platform
 }
 
@@ -555,7 +558,7 @@ void SendMouseEvent(int button, bool press, int x, int y) {
     }
     SetMousePosition(x, y);
 
-    // register previous state
+    // register previous state -- useful here as well to detect short events, e.g. button press/release faster than a frame
     CORE.Input.Mouse.previousButtonState[button] = CORE.Input.Mouse.currentButtonState[button];
 
     if (press) {
