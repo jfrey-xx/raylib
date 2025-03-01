@@ -98,6 +98,9 @@ compile_commands.json
 CTestTestfile.cmake
 build
 
+# Makefile stuff
+*.d
+
 # Ignore GNU global tags
 GPATH
 GRTAGS
