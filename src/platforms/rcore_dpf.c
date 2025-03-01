@@ -337,7 +337,7 @@ void DisableCursor(void)
 // Swap back buffer with front buffer (screen drawing)
 void SwapScreenBuffer(void)
 {
-    //eglSwapBuffers(platform.device, platform.surface);
+    // useless here, DPF after each onDisplay deals with that through its repaint()
 }
 
 //----------------------------------------------------------------------------------
@@ -410,6 +410,9 @@ const char *GetKeyName(int key)
 }
 
 // Register all input events
+// WARNING: doomed to be unused since we will send the event from DPF to dedicated functions
+// SetMousePosition()
+// SendMouseEvent()
 void PollInputEvents(void)
 {
 #if defined(SUPPORT_GESTURES_SYSTEM)
@@ -438,8 +441,7 @@ void PollInputEvents(void)
     //for (int i = 0; i < MAX_TOUCH_POINTS; i++) CORE.Input.Touch.position[i] = (Vector2){ 0, 0 };
 
     // Register previous keys states
-    // NOTE: Android supports up to 260 keys
-    for (int i = 0; i < 260; i++)
+    for (int i = 0; i < MAX_KEYBOARD_KEYS; i++)
     {
         CORE.Input.Keyboard.previousKeyState[i] = CORE.Input.Keyboard.currentKeyState[i];
         CORE.Input.Keyboard.keyRepeatInFrame[i] = 0;
@@ -541,6 +543,27 @@ int InitPlatform(void)
 void ClosePlatform(void)
 {
     // TODO: De-initialize graphics, inputs and more
+}
+
+// button, 0-index, button order: LEFT, RIGHT, MIDDLE (see MouseButton)
+// position should be relative position from the widget
+// note: we do not explicitly handle touch events
+void SendMouseEvent(int button, bool press, int x, int y) {
+    // discard extra buttons
+    if (button > MAX_MOUSE_BUTTONS) {
+        return;
+    }
+    SetMousePosition(x, y);
+
+    // register previous state
+    CORE.Input.Mouse.previousButtonState[button] = CORE.Input.Mouse.currentButtonState[button];
+
+    if (press) {
+        CORE.Input.Mouse.currentButtonState[button] = 1;
+    }
+    else {
+        CORE.Input.Mouse.currentButtonState[button] = 0;
+    }
 }
 
 // EOF

@@ -1707,6 +1707,12 @@ RLAPI void DetachAudioStreamProcessor(AudioStream stream, AudioCallback processo
 RLAPI void AttachAudioMixedProcessor(AudioCallback processor); // Attach audio stream processor to the entire audio pipeline, receives frames x 2 samples as 'float' (stereo)
 RLAPI void DetachAudioMixedProcessor(AudioCallback processor); // Detach audio stream processor from the entire audio pipeline
 
+// custon set of functions to directly sent events
+#if defined(PLATFORM_DPF)
+    // propagate mouse event to the core (e.g. mouse pressed button)
+    RLAPI void SendMouseEvent(int button, bool press, int x, int y);
+#endif
+
 #if defined(__cplusplus)
 }
 #endif
