@@ -181,9 +181,13 @@ void SetWindowMaxSize(int width, int height)
 // Set window dimensions
 void SetWindowSize(int width, int height)
 {
-    // just pass the info to the CORE
+    // pass the info to the CORE and immediately apply change
+    SetupViewport(width, height);
     CORE.Window.screen.width = width;
     CORE.Window.screen.height = height;
+    CORE.Window.currentFbo.width = width;
+    CORE.Window.currentFbo.height = height;
+    CORE.Window.resizedLastFrame = true;
 }
 
 // Set window opacity, value opacity is between 0.0 and 1.0
@@ -452,6 +456,9 @@ void PollInputEvents(void)
     // Register previous mouse states
     for (int i = 0; i < MAX_MOUSE_BUTTONS; i++) CORE.Input.Mouse.previousButtonState[i] = CORE.Input.Mouse.currentButtonState[i];
 
+    // reset resize status
+    CORE.Window.resizedLastFrame = false;
+
     // TODO: Poll input events for current platform
 }
 
@@ -462,13 +469,7 @@ void PollInputEvents(void)
 // Initialize platform: graphics, inputs and more
 int InitPlatform(void)
 {
-    // TODO: Initialize graphic device: display/window
-    // It usually requires setting up the platform display system configuration
-    // and connexion with the GPU through some system graphic API
-    // raylib uses OpenGL so, platform should create that kind of connection
-    // Below example illustrates that process using EGL library
-    //----------------------------------------------------------------------------
-    CORE.Window.fullscreen = true;
+    CORE.Window.fullscreen = false;
     CORE.Window.flags |= FLAG_FULLSCREEN_MODE;
 
     if (CORE.Window.flags & FLAG_MSAA_4X_HINT)
@@ -476,34 +477,13 @@ int InitPlatform(void)
         TRACELOG(LOG_INFO, "DISPLAY: Trying to enable MSAA x4");
     }
 
-
-    // Check surface and context activation
-    if (true)
-    {
-        CORE.Window.ready = true;
-
-	CORE.Window.display.width = CORE.Window.screen.width;
-        CORE.Window.display.height = CORE.Window.screen.height;
- 
-        CORE.Window.render.width = CORE.Window.screen.width;
-        CORE.Window.render.height = CORE.Window.screen.height;
-        CORE.Window.currentFbo.width = CORE.Window.render.width;
-        CORE.Window.currentFbo.height = CORE.Window.render.height;
-
-        TRACELOG(LOG_INFO, "DISPLAY: Device initialized successfully");
-        TRACELOG(LOG_INFO, "    > Display size: %i x %i", CORE.Window.display.width, CORE.Window.display.height);
-        TRACELOG(LOG_INFO, "    > Screen size:  %i x %i", CORE.Window.screen.width, CORE.Window.screen.height);
-        TRACELOG(LOG_INFO, "    > Render size:  %i x %i", CORE.Window.render.width, CORE.Window.render.height);
-        TRACELOG(LOG_INFO, "    > Viewport offsets: %i, %i", CORE.Window.renderOffset.x, CORE.Window.renderOffset.y);
-    }
-    else
-    {
-        TRACELOG(LOG_FATAL, "PLATFORM: Failed to initialize graphics device");
-        return -1;
-    }
     //----------------------------------------------------------------------------
 
+    // nothing to really init, we are always ready
+    CORE.Window.ready = true;
     // If everything work as expected, we can continue
+    CORE.Window.display.width = CORE.Window.screen.width;
+    CORE.Window.display.height = CORE.Window.screen.height;
     CORE.Window.render.width = CORE.Window.screen.width;
     CORE.Window.render.height = CORE.Window.screen.height;
     CORE.Window.currentFbo.width = CORE.Window.render.width;
@@ -539,7 +519,7 @@ int InitPlatform(void)
     CORE.Storage.basePath = GetWorkingDirectory();
     //----------------------------------------------------------------------------
 
-    TRACELOG(LOG_INFO, "PLATFORM: CUSTOM: Initialized successfully");
+    TRACELOG(LOG_INFO, "PLATFORM: DPF: Initialized successfully");
 
     return 0;
 }
