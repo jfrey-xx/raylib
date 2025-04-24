@@ -280,9 +280,9 @@ Vector2 GetWindowPosition(void)
 }
 
 // Get window scale DPI factor for current monitor
+// Note: return dummy value since DPI info and use is handled on DPF side
 Vector2 GetWindowScaleDPI(void)
 {
-    TRACELOG(LOG_WARNING, "GetWindowScaleDPI() not implemented on target platform");
     return (Vector2){ 1.0f, 1.0f };
 }
 
@@ -466,6 +466,11 @@ void PollInputEvents(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 
+// HOTFIX for macos, GL procedures address loader
+#if defined(GRAPHICS_API_OPENGL_33) && defined(__APPLE__)
+#include "rcore_dpf_extra.c"
+#endif
+
 // Initialize platform: graphics, inputs and more
 int InitPlatform(void)
 {
@@ -495,11 +500,16 @@ int InitPlatform(void)
     TRACELOG(LOG_INFO, "    > Render size:  %i x %i", CORE.Window.render.width, CORE.Window.render.height);
     TRACELOG(LOG_INFO, "    > Viewport offsets: %i, %i", CORE.Window.renderOffset.x, CORE.Window.renderOffset.y);
 
-    // TODO: Load OpenGL extensions
+    // Load OpenGL extensions -- only loading extentions for OPENGL_33 and APPLE at the moment
     // NOTE: GL procedures address loader is required to load extensions
-    //----------------------------------------------------------------------------
-    //rlLoadExtensions(eglGetProcAddress);
-    //----------------------------------------------------------------------------
+#if defined(GRAPHICS_API_OPENGL_33) && defined(__APPLE__)
+    if(open_gl()) {
+        rlLoadExtensions(get_proc);
+        close_gl();
+    } else {
+        TRACELOG(LOG_WARNING, "Could not retrieve GL infos");
+    }
+#endif
 
     // TODO: Initialize input events system
     // It could imply keyboard, mouse, gamepad, touch...
