@@ -857,13 +857,16 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
 #if defined(GRAPHICS_API_OPENGL_33)
     #define GLAD_MALLOC RL_MALLOC
     #define GLAD_FREE RL_FREE
-
-    #define GLAD_GL_IMPLEMENTATION
-//#include "external/glad.h"          // GLAD extensions loading library, includes OpenGL headers
-// direclty using gl, need the GL_GLEXT_PROTOTYPES to also get the needed declaration from glext.h
-#define GL_GLEXT_PROTOTYPES
-#include <GL/gl.h>              
-#endif
+#if defined(__APPLE__)
+   // GLAD extensions loading library, includes OpenGL headers
+   #define GLAD_GL_IMPLEMENTATION
+   #include "external/glad.h"
+#else
+    // direclty using gl, need the GL_GLEXT_PROTOTYPES to also get the needed declaration from glext.h
+    #define GL_GLEXT_PROTOTYPES
+    #include <GL/gl.h>
+#endif // __APPLE__
+#endif // GRAPHICS_API_OPENGL_33
 
 #if defined(GRAPHICS_API_OPENGL_ES3)
     #include <GLES3/gl3.h>              // OpenGL ES 3.0 library
@@ -2347,9 +2350,10 @@ void rlLoadExtensions(void *loader)
 {
 #if defined(GRAPHICS_API_OPENGL_33)     // Also defined for GRAPHICS_API_OPENGL_21
     // NOTE: glad is generated and contains only required OpenGL 3.3 Core extensions (and lower versions)
-    //if (gladLoadGL((GLADloadfunc)loader) == 0) TRACELOG(RL_LOG_WARNING, "GLAD: Cannot load OpenGL extensions");
-    //else TRACELOG(RL_LOG_INFO, "GLAD: OpenGL extensions loaded successfully");
-
+#if defined(__APPLE__)
+    if (gladLoadGL((GLADloadfunc)loader) == 0) TRACELOG(RL_LOG_WARNING, "GLAD: Cannot load OpenGL extensions");
+    else TRACELOG(RL_LOG_INFO, "GLAD: OpenGL extensions loaded successfully");
+#endif
     // Get number of supported extensions
     GLint numExt = 0;
     glGetIntegerv(GL_NUM_EXTENSIONS, &numExt);
@@ -2389,9 +2393,11 @@ void rlLoadExtensions(void *loader)
 #endif
 
     // Optional OpenGL 3.3 extensions
-    //RLGL.ExtSupported.texCompASTC = GLAD_GL_KHR_texture_compression_astc_hdr && GLAD_GL_KHR_texture_compression_astc_ldr;
-    //RLGL.ExtSupported.texCompDXT = GLAD_GL_EXT_texture_compression_s3tc;  // Texture compression: DXT
-    //RLGL.ExtSupported.texCompETC2 = GLAD_GL_ARB_ES3_compatibility;        // Texture compression: ETC2/EAC
+#if defined(__APPLE__)
+    RLGL.ExtSupported.texCompASTC = GLAD_GL_KHR_texture_compression_astc_hdr && GLAD_GL_KHR_texture_compression_astc_ldr;
+    RLGL.ExtSupported.texCompDXT = GLAD_GL_EXT_texture_compression_s3tc;  // Texture compression: DXT
+    RLGL.ExtSupported.texCompETC2 = GLAD_GL_ARB_ES3_compatibility;        // Texture compression: ETC2/EAC
+#endif
     #if defined(GRAPHICS_API_OPENGL_43)
     RLGL.ExtSupported.computeShader = GLAD_GL_ARB_compute_shader;
     RLGL.ExtSupported.ssbo = GLAD_GL_ARB_shader_storage_buffer_object;
