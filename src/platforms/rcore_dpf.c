@@ -467,7 +467,7 @@ void PollInputEvents(void)
 //----------------------------------------------------------------------------------
 
 // HOTFIX for macos, GL procedures address loader
-#if defined(GRAPHICS_API_OPENGL_33) && defined(__APPLE__)
+#if defined(__APPLE__)
 #include "rcore_dpf_extra.c"
 #endif
 
@@ -500,9 +500,9 @@ int InitPlatform(void)
     TRACELOG(LOG_INFO, "    > Render size:  %i x %i", CORE.Window.render.width, CORE.Window.render.height);
     TRACELOG(LOG_INFO, "    > Viewport offsets: %i, %i", CORE.Window.renderOffset.x, CORE.Window.renderOffset.y);
 
-    // Load OpenGL extensions -- only loading extentions for OPENGL_33 and APPLE at the moment
+    // Load OpenGL extensions -- only loading extentions for APPLE at the moment
     // NOTE: GL procedures address loader is required to load extensions
-#if defined(GRAPHICS_API_OPENGL_33) && defined(__APPLE__)
+#if defined(__APPLE__)
     if(open_gl()) {
         rlLoadExtensions(get_proc);
         close_gl();
