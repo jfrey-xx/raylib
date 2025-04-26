@@ -466,10 +466,8 @@ void PollInputEvents(void)
 // Module Internal Functions Definition
 //----------------------------------------------------------------------------------
 
-// HOTFIX for macos, GL procedures address loader
-#if defined(__APPLE__)
+// GL procedures address loader
 #include "rcore_dpf_extra.c"
-#endif
 
 // Initialize platform: graphics, inputs and more
 int InitPlatform(void)
@@ -500,16 +498,13 @@ int InitPlatform(void)
     TRACELOG(LOG_INFO, "    > Render size:  %i x %i", CORE.Window.render.width, CORE.Window.render.height);
     TRACELOG(LOG_INFO, "    > Viewport offsets: %i, %i", CORE.Window.renderOffset.x, CORE.Window.renderOffset.y);
 
-    // Load OpenGL extensions -- only loading extentions for APPLE at the moment
-    // NOTE: GL procedures address loader is required to load extensions
-#if defined(__APPLE__)
+    // Load OpenGL extensions
     if(open_gl()) {
         rlLoadExtensions(get_proc);
         close_gl();
     } else {
         TRACELOG(LOG_WARNING, "Could not retrieve GL infos");
     }
-#endif
 
     // TODO: Initialize input events system
     // It could imply keyboard, mouse, gamepad, touch...
