@@ -42,7 +42,9 @@ static void* get_proc(const char *namez);
 #ifndef _WINDOWS_
 #undef APIENTRY
 #endif
-#include <windows.h>
+// cannot include windows.h or it will clash with raylib, restrain to what is necessary here
+//#include <windows.h>
+#include <libloaderapi.h>
 static HMODULE libGL;
 
 typedef void* (APIENTRYP PFNWGLGETPROCADDRESSPROC_PRIVATE)(const char*);
