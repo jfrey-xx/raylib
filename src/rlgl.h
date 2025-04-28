@@ -858,9 +858,9 @@ RLAPI void rlLoadDrawQuad(void);     // Load and draw a quad
     #define GLAD_MALLOC RL_MALLOC
     #define GLAD_FREE RL_FREE
 #if !defined(PLATFORM_DPF) || defined(__APPLE__) || defined(_WIN32)
-   // GLAD extensions loading library, includes OpenGL headers
-   #define GLAD_GL_IMPLEMENTATION
-   #include "external/glad.h"
+    // GLAD extensions loading library, includes OpenGL headers
+    #define GLAD_GL_IMPLEMENTATION
+    #include "external/glad.h"
 #else
     // with DPF and on linux glad inclusion causes segmentation fault, directly using gl instead
     // need the GL_GLEXT_PROTOTYPES to also get the needed declaration from glext.h
@@ -2351,7 +2351,7 @@ void rlLoadExtensions(void *loader)
 {
 #if defined(GRAPHICS_API_OPENGL_33)     // Also defined for GRAPHICS_API_OPENGL_21
     // NOTE: glad is generated and contains only required OpenGL 3.3 Core extensions (and lower versions)
-#if !defined(PLATFORM_DPF) || defined(__APPLE__)
+#if !defined(PLATFORM_DPF) || defined(__APPLE__) || defined(_WIN32)
     if (gladLoadGL((GLADloadfunc)loader) == 0) TRACELOG(RL_LOG_WARNING, "GLAD: Cannot load OpenGL extensions");
     else TRACELOG(RL_LOG_INFO, "GLAD: OpenGL extensions loaded successfully");
 #endif
@@ -2394,7 +2394,7 @@ void rlLoadExtensions(void *loader)
 #endif
 
     // Optional OpenGL 3.3 extensions
-#if !defined(PLATFORM_DPF) || defined(__APPLE__)
+#if !defined(PLATFORM_DPF) || defined(__APPLE__) || defined(_WIN32)
     RLGL.ExtSupported.texCompASTC = GLAD_GL_KHR_texture_compression_astc_hdr && GLAD_GL_KHR_texture_compression_astc_ldr;
     RLGL.ExtSupported.texCompDXT = GLAD_GL_EXT_texture_compression_s3tc;  // Texture compression: DXT
     RLGL.ExtSupported.texCompETC2 = GLAD_GL_ARB_ES3_compatibility;        // Texture compression: ETC2/EAC
@@ -2431,7 +2431,7 @@ void rlLoadExtensions(void *loader)
 
 #elif defined(GRAPHICS_API_OPENGL_ES2)
 
-    #if defined(PLATFORM_DESKTOP_GLFW) || defined(PLATFORM_DESKTOP_SDL) || (defined(PLATFORM_DPF) && defined(__APPLE__))
+#if defined(PLATFORM_DESKTOP_GLFW) || defined(PLATFORM_DESKTOP_SDL) || (defined(PLATFORM_DPF) && (defined(__APPLE__) || defined(_WIN32)))
     // TODO: Support GLAD loader for OpenGL ES 3.0
     if (gladLoadGLES2((GLADloadfunc)loader) == 0) TRACELOG(RL_LOG_WARNING, "GLAD: Cannot load OpenGL ES2.0 functions");
     else TRACELOG(RL_LOG_INFO, "GLAD: OpenGL ES 2.0 loaded successfully");

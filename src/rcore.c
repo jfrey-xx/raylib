@@ -166,10 +166,8 @@
         #define MAX_PATH 1025
     #endif
     // code for the loader with DPF already includes libloaderapi.h, which comes with those two
-    #if !defined(PLATFORM_DPF)
-        __declspec(dllimport) unsigned long __stdcall GetModuleFileNameA(void *hModule, void *lpFilename, unsigned long nSize);
-        __declspec(dllimport) unsigned long __stdcall GetModuleFileNameW(void *hModule, void *lpFilename, unsigned long nSize);
-    #endif
+__declspec(dllimport) unsigned long __stdcall GetModuleFileNameA(void *hModule, void *lpFilename, unsigned long nSize);
+__declspec(dllimport) unsigned long __stdcall GetModuleFileNameW(void *hModule, void *lpFilename, unsigned long nSize);
 __declspec(dllimport) int __stdcall WideCharToMultiByte(unsigned int cp, unsigned long flags, void *widestr, int cchwide, void *str, int cbmb, void *defchar, int *used_default);
 __declspec(dllimport) unsigned int __stdcall timeBeginPeriod(unsigned int uPeriod);
 __declspec(dllimport) unsigned int __stdcall timeEndPeriod(unsigned int uPeriod);

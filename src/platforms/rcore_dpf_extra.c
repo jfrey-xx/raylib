@@ -43,8 +43,13 @@ static void* get_proc(const char *namez);
 #undef APIENTRY
 #endif
 // cannot include windows.h or it will clash with raylib, restrain to what is necessary here
-//#include <windows.h>
+// still, we need trick to avoid multiple definitions of some symbols used by rlgl
+#define GetModuleFileNameA GetModuleFileNameA32
+#define GetModuleFileNameW GetModuleFileNameW32
 #include <libloaderapi.h>
+#undef GetModuleFileNameA
+#undef GetModuleFileNameW
+
 static HMODULE libGL;
 
 typedef void* (APIENTRYP PFNWGLGETPROCADDRESSPROC_PRIVATE)(const char*);
