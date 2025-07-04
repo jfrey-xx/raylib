@@ -2656,7 +2656,12 @@ int rlGetVersion(void)
 #if defined(GRAPHICS_API_OPENGL_ES3)
     glVersion = RL_OPENGL_ES_30;
 #elif defined(GRAPHICS_API_OPENGL_ES2)
+    // HOTIFX for mac, which does not support GLSL 100
+#if defined(__APPLE__)
+    glVersion = RL_OPENGL_21;
+#else
     glVersion = RL_OPENGL_ES_20;
+#endif
 #endif
 
     return glVersion;
